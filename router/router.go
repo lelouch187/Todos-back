@@ -13,4 +13,5 @@ func SetupRoutes(app *fiber.App) {
 
 	api.Post("/", controllers.CreateColumnHandler)
 
+	api.Delete("/:id", controllers.DeleteColumn)
 }

@@ -31,7 +31,6 @@ func CreateColumnHandler(c *fiber.Ctx) error {
 }
 
 func FindColumns(c *fiber.Ctx) error {
-
 	var columns []models.Column
 	results := initializers.DB.Find(&columns)
 	if results.Error != nil {
@@ -39,4 +38,18 @@ func FindColumns(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "columns": columns})
+}
+
+func DeleteColumn(c *fiber.Ctx) error {
+	column := c.Params("id")
+
+	result := initializers.DB.Unscoped().Delete(&models.Column{}, column)
+
+	if result.RowsAffected == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"status": "fail", "message": "No note with that Id exists"})
+	} else if result.Error != nil {
+		return c.Status(fiber.StatusBadGateway).JSON(fiber.Map{"status": "error", "message": result.Error})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }
